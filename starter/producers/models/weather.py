@@ -1,4 +1,5 @@
 """Methods pertaining to weather data"""
+from dataclasses import asdict
 from enum import IntEnum
 import json
 import logging
@@ -76,22 +77,30 @@ class Weather(Producer):
     def run(self, month):
         self._set_weather(month)
 
-        #
-        #
         # TODO: Complete the function by posting a weather event to REST Proxy. Make sure to
         # specify the Avro schemas and verify that you are using the correct Content-Type header.
-        #
-        #
+
         logger.info("weather kafka proxy integration incomplete - skipping")
         resp = requests.post(
             # TODO: What URL should be POSTed to?
+
             f"{Weather.rest_proxy_url}/topics/weather_{month}",
+
             # TODO: What Headers need to bet set?
-            headers={"Content-Type": "application/vnd.kafka.avro.v2+json"},
+            headers={
+                "Content-Type": "application/vnd.kafka.avro.v2+json"
+            },
+
             data=json.dumps(
                 {
                     # TODO: Provide key schema, value schema, and records
-                    ""
+                    "key_schema": Weather.key_schema,
+                    "value_schema": Weather.value_schema,
+                    "records": [
+                        {
+                            "value": asdict(self)
+                        }
+                    ]
                 }
             ),
         )
