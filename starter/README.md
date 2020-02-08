@@ -76,7 +76,8 @@ To accomplish this, you must complete the following tasks:
 	* To delete a misconfigured connector: `CURL -X DELETE localhost:8083/connectors/stations`
 
 ### Step 4: Configure the Faust Stream Processor
-We will leverage Faust Stream Processing to transform the raw Stations table that we ingested from Kafka Connect. The raw format from the database has more data than we need, and the line color information is not conveniently configured. To remediate this, we're going to ingest data from our Kafka Connect topic, and transform the data.
+We will leverage Faust Stream Processing to transform the raw Stations table that we ingested from Kafka Connect. The raw format from the database has more data than we need, and the line color information is not conveniently configured.
+ To remediate this, we're going to ingest data from our Kafka Connect topic, and transform the data.
 
 To accomplish this, you must complete the following tasks:
 
