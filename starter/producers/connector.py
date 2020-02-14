@@ -54,7 +54,7 @@ def configure_connector():
                 # TODO
                 "topic.prefix": "connector",
                 # TODO
-                "poll.interval.ms": "",
+                "poll.interval.ms": "100",
             }
         }),
     )
