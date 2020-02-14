@@ -39,16 +39,16 @@ topic = app.topic("stations", value_type=Station)
 
 
 # TODO: Define the output Kafka Topic
-out_topic = app.topic("Transformed-Stations", partitions=1)
+out_topic = app.topic("transformed_stations", partitions=1)
 
 
 # TODO: Define a Faust Table
-#table = app.Table(
-#    # "TODO",
-#    # default=TODO,
-#    partitions=1,
-#    changelog_topic=out_topic,
-#)
+table = app.Table(
+    "TODO",
+    default=TODO,
+    partitions=1,
+    changelog_topic=out_topic,
+)
 
 
 #
@@ -58,6 +58,29 @@ out_topic = app.topic("Transformed-Stations", partitions=1)
 # then you would set the `line` of the `TransformedStation` record to the string `"red"`
 #
 #
+
+def modify_stream(stream):
+    if stream.red:
+        stream.line = "red"
+    elif stream.blue:
+        stream.line = "blue"
+    else:
+        stream.line = "green"
+    return stream
+
+
+@app.agent(topic)
+async def process(stations):
+    stations.add_processor(stations)
+
+    for station in stations:
+        transformed_station = TransformedStation(
+            station_id=station.station_id,
+            station_name=station.station_name,
+            order=station.order,
+            line=station.line
+        )
+        await out_topic.send(key=transformed_station.station_id, value=transformed_station)
 
 
 if __name__ == "__main__":
