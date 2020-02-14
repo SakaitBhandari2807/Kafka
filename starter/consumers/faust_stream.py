@@ -30,12 +30,18 @@ class TransformedStation(faust.Record):
 
 
 # TODO: Define a Faust Stream that ingests data from the Kafka Connect stations topic and
-#   places it into a new topic with only the necessary information.
+#   places it into a new topic with only the necessary information
 app = faust.App("stations-stream", broker="kafka://localhost:9092", store="memory://")
+
+
 # TODO: Define the input Kafka Topic. Hint: What topic did Kafka Connect output to?
-# topic = app.topic("TODO", value_type=Station)
+topic = app.topic("stations", value_type=Station)
+
+
 # TODO: Define the output Kafka Topic
-# out_topic = app.topic("TODO", partitions=1)
+out_topic = app.topic("Transformed-Stations", partitions=1)
+
+
 # TODO: Define a Faust Table
 #table = app.Table(
 #    # "TODO",
