@@ -44,8 +44,8 @@ out_topic = app.topic("transformed_stations", partitions=1)
 
 # TODO: Define a Faust Table
 table = app.Table(
-    "TODO",
-    default=TODO,
+    "table-faust",
+    default=int,
     partitions=1,
     changelog_topic=out_topic,
 )
@@ -66,12 +66,13 @@ def modify_stream(stream):
         stream.line = "blue"
     else:
         stream.line = "green"
+    logger.debug(f"stream.line : {stream.line}")
     return stream
 
 
 @app.agent(topic)
 async def process(stations):
-    stations.add_processor(stations)
+    stations.add_processor(modify_stream)
 
     for station in stations:
         transformed_station = TransformedStation(
