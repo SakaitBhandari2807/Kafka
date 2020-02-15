@@ -30,7 +30,7 @@ class Station(Producer):
             .replace("-", "_")
             .replace("'", "")
         )
-
+        logger.info(f"station_id:{station_id}\n station_name: {name}\n color: {color}\n")
         #
         #
         # TODO: Complete the below by deciding on a topic name, number of partitions, and number of
@@ -38,7 +38,13 @@ class Station(Producer):
         #
         #
         topic_name = f"{station_name}"
-        super().__init__(topic_name,key_schema=Station.key_schema,value_schema=Station.value_schema,num_partitions=1, num_replicas=1)
+        super().__init__(
+            topic_name,
+            key_schema=Station.key_schema,
+            value_schema=Station.value_schema,
+            num_partitions=1,
+            num_replicas=1
+        )
 
         self.station_id = int(station_id)
         self.color = color
@@ -47,6 +53,8 @@ class Station(Producer):
         self.a_train = None
         self.b_train = None
         self.turnstile = Turnstile(self)
+
+        logger.info(f"{self.station_id}\n{self.color}")
 
     def run(self, train, direction, prev_station_id, prev_direction):
         """Simulates train arrivals at this station"""
