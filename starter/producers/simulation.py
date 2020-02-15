@@ -80,4 +80,4 @@ class TimeSimulation:
 
 
 if __name__ == "__main__":
-    TimeSimulation().run()
+    TimeSimulation()

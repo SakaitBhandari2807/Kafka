@@ -30,14 +30,15 @@ class Station(Producer):
             .replace("-", "_")
             .replace("'", "")
         )
-        logger.info(f"station_id:{station_id}\n station_name: {name}\n color: {color}\n")
+        # logger.info(f"station_id:{station_id}\n station_name: {name}\n color: {color}\n")
         #
         #
         # TODO: Complete the below by deciding on a topic name, number of partitions, and number of
         # replicas
         #
         #
-        topic_name = f"{station_name}"
+        topic_name = f"com.udacity.project1.stations.{station_name}"
+        # logger.info(f"topic_name:{topic_name}")
         super().__init__(
             topic_name,
             key_schema=Station.key_schema,
@@ -53,8 +54,7 @@ class Station(Producer):
         self.a_train = None
         self.b_train = None
         self.turnstile = Turnstile(self)
-
-        logger.info(f"{self.station_id}\n{self.color}")
+        # logger.info(f"{self.station_id}\n{self.color}\n{self.dir_a}\n{self.dir_b}\n{self.a_train}\n{self.b_train}")
 
     def run(self, train, direction, prev_station_id, prev_direction):
         """Simulates train arrivals at this station"""

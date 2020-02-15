@@ -5,7 +5,6 @@ import logging
 
 from models import Station, Train
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -18,8 +17,8 @@ class Line:
     def __init__(self, color, station_data, num_trains=10):
         self.color = color
         self.num_trains = num_trains
+        # logger.info(f"{self.color}\n{self.num_trains}")
         self.stations = self._build_line_data(station_data)
-
         # We must always discount the terminal station at the end of each direction
         self.num_stations = len(self.stations) - 1
         self.trains = self._build_trains()
@@ -27,23 +26,27 @@ class Line:
     def _build_line_data(self, station_df):
         """Constructs all stations on the line"""
         stations = station_df["station_name"].unique()
-        logger.info(f"stations :{stations}")
+
+        logger.info(f"\nunique statns: {stations}")
+
         station_data = station_df[station_df["station_name"] == stations[0]]
+
+        # logger.info(f"{station_data}")
         line = [
-             Station(station_data["station_id"].unique()[0], stations[0], self.color)
+            Station(station_data["station_id"].unique()[0], stations[0], self.color)
         ]
-        # prev_station = line[0]
-        # for station in stations[1:]:
-        #     station_data = station_df[station_df["station_name"] == station]
-        #     new_station = Station(
-        #         station_data["station_id"].unique()[0],
-        #         station,
-        #         self.color,
-        #         prev_station,
-        #     )
-        #     prev_station.dir_b = new_station
-        #     prev_station = new_station
-        #     line.append(new_station)
+        prev_station = line[0]
+        for station in stations[1:]:
+            station_data = station_df[station_df["station_name"] == station]
+            new_station = Station(
+                station_data["station_id"].unique()[0],
+                station,
+                self.color,
+                prev_station,
+            )
+            prev_station.dir_b = new_station
+            prev_station = new_station
+            line.append(new_station)
         return line
 
     def _build_trains(self):

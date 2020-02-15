@@ -49,7 +49,7 @@ class Producer:
 
         # If the topic does not already exist, try to create it
         if self.topic_name not in Producer.existing_topics:
-            logger.info("Creating topic now")
+            logger.info(f"Creating topic {self.topic_name} now")
             self.create_topic()
             Producer.existing_topics.add(self.topic_name)
 
@@ -78,7 +78,7 @@ class Producer:
         ])
 
         for topic, future in futures.items():
-            logger.info(futures.items())
+            # logger.info(futures.items())
             try:
                 future.result()
                 logger.info("topic created")
