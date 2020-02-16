@@ -46,7 +46,7 @@ class Turnstile(Producer):
         )
         self.station = station
         # logger.info(f"\nturnstile topic : T{station_name}")
-        # self.turnstile_hardware = TurnstileHardware(station)
+        self.turnstile_hardware = TurnstileHardware(station)
 
     def run(self, timestamp, time_step):
         """Simulates riders entering through the turnstile."""

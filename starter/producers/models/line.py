@@ -21,6 +21,8 @@ class Line:
         self.stations = self._build_line_data(station_data)
         # We must always discount the terminal station at the end of each direction
         self.num_stations = len(self.stations) - 1
+        logger.info(f"\nNumber of stations: {self.num_stations}")
+        logger.info("Running _build_trains() function ")
         self.trains = self._build_trains()
 
     def _build_line_data(self, station_df):
@@ -56,6 +58,8 @@ class Line:
         b_dir = True
         for train_id in range(self.num_trains):
             tid = str(train_id).zfill(3)
+            logger.info(f"train id: {tid}")
+            logger.info(f"Debug for what is this : {self.color.name[0]}")
             train = Train(
                 f"{self.color.name[0].upper()}L{tid}", Train.status.in_service
             )

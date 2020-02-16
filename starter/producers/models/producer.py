@@ -15,7 +15,7 @@ class Producer:
 
     # Tracks existing topics across all Producer instances
     existing_topics = set([])
-    SCHEMA_REGISTRY_URL = "https://localhost:8081"
+    SCHEMA_REGISTRY_URL = "http://localhost:8081"
     BROKER_URL = "PLAINTEXT://localhost:9092"
 
     def __init__(
@@ -39,11 +39,8 @@ class Producer:
         # and use the Host URL for Kafka and Schema Registry!
         #
         #
-        schema_registry = CachedSchemaRegistryClient(Producer.SCHEMA_REGISTRY_URL)
+        self.schema_registry = CachedSchemaRegistryClient(Producer.SCHEMA_REGISTRY_URL)
         self.broker_properties = {
-            # TODO
-            # TODO
-            # TODO
             "bootstrap.servers": Producer.BROKER_URL
         }
 
@@ -56,7 +53,7 @@ class Producer:
         # TODO: Configure the AvroProducer
         self.producer = AvroProducer(
             self.broker_properties,
-            schema_registry=schema_registry
+            schema_registry=self.schema_registry
          )
         logger.info("Producer ready to produce")
 

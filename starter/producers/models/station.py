@@ -63,17 +63,21 @@ class Station(Producer):
         #
 
         logger.info("arrival kafka integration complete - running")
+        logger.info(f"{self.station_id},{train.train_id},{direction},{self.color.name},{train.status}")
         self.producer.produce(
             topic=self.topic_name,
             key={"timestamp": self.time_millis()},
             value={
-                "train_id": train,
-                "station_id": self.station_id,
+                "train_id": str(train.train_id),
+                "station_id": str(self.station_id),
                 "direction": direction,
-                "train_status": "",
-                "prev_station_id": prev_station_id,
-                "prev_direction": prev_direction
+                "line": self.color.name,
+                "train_status": train.status.name,
+                "prev_station_id": str(prev_station_id),
+                "prev_direction": str(prev_direction)
             },
+            key_schema=Station.key_schema,
+            value_schema=Station.value_schema
         )
 
     def __str__(self):

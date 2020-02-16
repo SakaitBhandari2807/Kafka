@@ -22,6 +22,7 @@ class TurnstileHardware:
         self.metrics_df = TurnstileHardware.seed_df[
             TurnstileHardware.seed_df["station_id"] == station.station_id
         ]
+        logger.info(self.metrics_df)
         self.weekday_ridership = int(
             round(self.metrics_df.iloc[0]["avg_weekday_rides"])
         )
@@ -31,6 +32,7 @@ class TurnstileHardware:
         self.sunday_ridership = int(
             round(self.metrics_df.iloc[0]["avg_sunday-holiday_rides"])
         )
+        logger.info(f"\n weekday_ridership:{self.weekday_ridership}\n saturday_ridership {self.saturday_ridership}\n sunday_ridership {self.sunday_ridership}")
 
     @classmethod
     def _load_data(cls):

@@ -14,6 +14,7 @@ class Train:
     def __init__(self, train_id, status):
         self.train_id = train_id
         self.status = status
+        logger.debug(f"\ntrain_id :{self.train_id}\n Train_status{self.status}")
         if self.status is None:
             self.status = Train.status.out_of_service
 
