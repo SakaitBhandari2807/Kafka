@@ -10,11 +10,13 @@ from pathlib import Path
 
 import pandas as pd
 
+from connector import configure_connector
+from models import Line, Weather
+
 # Import logging before models to ensure configuration is picked up
 logging.config.fileConfig(f"{Path(__file__).parents[0]}/logging.ini")
 
-from connectors import configure_connector
-from models import Line, Weather
+
 
 logger = logging.getLogger(__name__)
 
@@ -61,9 +63,10 @@ class TimeSimulation:
         logger.info(f"Current time: {curr_time}")
         logger.info("Beginning simulation, press Ctrl+C to exit at any time")
         logger.info("loading kafka connect jdbc source connector")
-        configure_connector()
+        # configure_connector()
 
         logger.info("beginning cta train simulation")
+        logger.info(f"current time month: {curr_time.month}")
         weather = Weather(curr_time.month)
         try:
             while True:
@@ -71,12 +74,12 @@ class TimeSimulation:
                 # Send weather on the top of the hour
                 if curr_time.minute == 0:
                     weather.run(curr_time.month)
-                _ = [line.run(curr_time, self.time_step) for line in self.train_lines]
+                _ = [line.run(curr_time, self.time_step) for line in self.train_lines[0]]
                 curr_time = curr_time + self.time_step
                 time.sleep(self.sleep_seconds)
         except KeyboardInterrupt as e:
             logger.info("Shutting down")
-            _ = [line.close() for line in self.train_lines]
+            _ = [line.close() for line in self.train_lines[0]]
 
 
 if __name__ == "__main__":

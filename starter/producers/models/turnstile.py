@@ -62,8 +62,8 @@ class Turnstile(Producer):
             topic=self.station.name,
             key={"timestamp": self.time_millis()},
             value={
-                "station_id": self.station.station_id,
+                "station_id": str(self.station.station_id),
                 "station_name": self.station.name,
-                "line": "",
+                "line": self.station.line,
             }
         )

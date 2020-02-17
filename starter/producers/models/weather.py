@@ -38,7 +38,7 @@ class Weather(Producer):
         #
         #
         super().__init__(
-            f"weather_{month}",
+            "com.udacity.project1.weather",
             # TODO: Come up with a better topic name
             key_schema=Weather.key_schema,
             value_schema=Weather.value_schema,
@@ -63,6 +63,7 @@ class Weather(Producer):
         if Weather.value_schema is None:
             with open(f"{Path(__file__).parents[0]}/schemas/weather_value.json") as f:
                 Weather.value_schema = json.load(f)
+        logger.info(f"status : {self.status}\n temperature : {self.temp}")
 
     def _set_weather(self, month):
         """Returns the current weather"""
@@ -80,11 +81,11 @@ class Weather(Producer):
         # TODO: Complete the function by posting a weather event to REST Proxy. Make sure to
         # specify the Avro schemas and verify that you are using the correct Content-Type header.
 
-        logger.info("weather kafka proxy integration incomplete - skipping")
+        logger.info("weather kafka proxy integration complete - Running")
         resp = requests.post(
             # TODO: What URL should be POSTed to?
 
-            f"{Weather.rest_proxy_url}/topics/weather_{month}",
+            f"{Weather.rest_proxy_url}/topics/com.udacity.project1.weather",
 
             # TODO: What Headers need to bet set?
             headers={
@@ -98,7 +99,11 @@ class Weather(Producer):
                     "value_schema": Weather.value_schema,
                     "records": [
                         {
-                            "value": asdict(self)
+                            "key": {"timestamp": str(self.time_millis())},
+                            "value": {
+                                "temperature":self.temp,
+                                "status":self.status
+                            }
                         }
                     ]
                 }
