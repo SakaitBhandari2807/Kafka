@@ -20,7 +20,7 @@ class Station(Producer):
     # TODO: Define this value schema in `schemas/station_value.json, then uncomment the below
     #
     value_schema = avro.load(f"{Path(__file__).parents[0]}/schemas/arrival_value.json")
-
+    # logger.info("Loaded: "+str(type(value_schema)))
     def __init__(self, station_id, name, color, direction_a=None, direction_b=None):
         self.name = name
         station_name = (

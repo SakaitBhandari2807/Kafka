@@ -51,19 +51,28 @@ class Turnstile(Producer):
     def run(self, timestamp, time_step):
         """Simulates riders entering through the turnstile."""
         num_entries = self.turnstile_hardware.get_entries(timestamp, time_step)
-        logger.info("turnstile kafka integration incomplete - skipping")
+        logger.info(f"num_entries for turnstile at station {self.station.station_id}")
+        logger.info("turnstile kafka integration complete - Running")
         #
         #
         # TODO: Complete this function by emitting a message to the turnstile topic for the number
         # of entries that were calculated
         #
         #
-        self.producer.produce(
-            topic=self.station.name,
-            key={"timestamp": self.time_millis()},
-            value={
-                "station_id": str(self.station.station_id),
-                "station_name": self.station.name,
-                "line": self.station.line,
-            }
-        )
+        for _ in range(num_entries):
+            try:
+
+                self.producer.produce(
+                topic=self.topic_name,
+                key={"timestamp": self.time_millis()},
+                value={
+                    "station_id":str(self.station.station_id),
+                    "station_name":str(self.station.name),
+                    "line":str(self.station.color.name)},
+                key_schema=Turnstile.key_schema,
+                value_schema=Turnstile.value_schema)
+
+            except Exception as e:
+
+                logger.fatal(e)
+                raise e

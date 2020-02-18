@@ -38,8 +38,7 @@ class Weather(Producer):
         #
         #
         super().__init__(
-            "com.udacity.project1.weather",
-            # TODO: Come up with a better topic name
+            "com.udacity.project1.weather", # TODO: Come up with a better topic name
             key_schema=Weather.key_schema,
             value_schema=Weather.value_schema,
             num_partitions=1,
@@ -63,7 +62,6 @@ class Weather(Producer):
         if Weather.value_schema is None:
             with open(f"{Path(__file__).parents[0]}/schemas/weather_value.json") as f:
                 Weather.value_schema = json.load(f)
-        logger.info(f"status : {self.status}\n temperature : {self.temp}")
 
     def _set_weather(self, month):
         """Returns the current weather"""
@@ -78,41 +76,62 @@ class Weather(Producer):
     def run(self, month):
         self._set_weather(month)
 
+        #
+        #
         # TODO: Complete the function by posting a weather event to REST Proxy. Make sure to
         # specify the Avro schemas and verify that you are using the correct Content-Type header.
+        #
+        #
 
-        logger.info("weather kafka proxy integration complete - Running")
-        resp = requests.post(
-            # TODO: What URL should be POSTed to?
-
-            f"{Weather.rest_proxy_url}/topics/com.udacity.project1.weather",
-
-            # TODO: What Headers need to bet set?
-            headers={
-                "Content-Type": "application/vnd.kafka.avro.v2+json"
-            },
-
-            data=json.dumps(
-                {
-                    # TODO: Provide key schema, value schema, and records
-                    "key_schema": Weather.key_schema,
-                    "value_schema": Weather.value_schema,
-                    "records": [
-                        {
-                            "key": {"timestamp": str(self.time_millis())},
-                            "value": {
-                                "temperature":self.temp,
-                                "status":self.status
-                            }
-                        }
-                    ]
-                }
-            ),
-        )
-        resp.raise_for_status()
-
+        #resp = requests.post(
+        #    #
+        #    #
+        #    # TODO: What URL should be POSTed to?
+        #    #
+        #    #
+        #    f"{Weather.rest_proxy_url}/TODO",
+        #    #
+        #    #
+        #    # TODO: What Headers need to bet set?
+        #    #
+        #    #
+        #    headers={"Content-Type": "TODO"},
+        #    data=json.dumps(
+        #        {
+        #            #
+        #            #
+        #            # TODO: Provide key schema, value schema, and records
+        #            #
+        #            #
+        #        }
+        #    ),
+        #)
+        #resp.raise_for_status()
+         # TODO: Set the appropriate headers
+        #       See: https://docs.confluent.io/current/kafka-rest/api.html#content-types
+        headers = {"Content-Type": "application/vnd.kafka.json.v2+json"}
+        # TODO: Update the below payload to include the Avro Schema string
+        #       See: https://docs.confluent.io/current/kafka-rest/api.html#post--topics-(string-topic_name)
+        data = {"value_schema": self.value_schema,
+                "key_schema": self.key_schema,
+                "records": [{
+                    "key": {"timestamp": str(self.time_millis())},
+                    "value": {
+            "temperature":str(self.temp),
+            "status":str(self.status.name)
+        }}]}
         logger.debug(
-            "sent weather data to kafka, temp: %s, status: %s",
-            self.temp,
-            self.status.name,
+            "Sending:  "+str(data)
         )
+        resp = requests.post(
+            f"{Weather.rest_proxy_url}/topics/com.udacity.project1.weather",  # TODO
+            data=json.dumps(data),
+            headers=headers
+        )
+
+        try:
+            resp.raise_for_status()
+        except:
+            print(f"Failed to send data to REST Proxy {json.dumps(resp.json(), indent=2)}")
+
+        print(f"Sent data to REST Proxy {json.dumps(resp.json(), indent=2)}")

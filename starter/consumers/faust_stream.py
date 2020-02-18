@@ -30,24 +30,18 @@ class TransformedStation(faust.Record):
 
 
 # TODO: Define a Faust Stream that ingests data from the Kafka Connect stations topic and
-#   places it into a new topic with only the necessary information
+#   places it into a new topic with only the necessary information.
 app = faust.App("stations-stream", broker="kafka://localhost:9092", store="memory://")
-
-
 # TODO: Define the input Kafka Topic. Hint: What topic did Kafka Connect output to?
-topic = app.topic("stations", value_type=Station)
-
-
+topic = app.topic("connectorstations", value_type=Station)
 # TODO: Define the output Kafka Topic
 out_topic = app.topic("transformed_stations", partitions=1)
-
-
 # TODO: Define a Faust Table
 table = app.Table(
-    "table-faust",
-    default=int,
-    partitions=1,
-    changelog_topic=out_topic,
+     "faust-table",
+     default=TransformedStation,
+     partitions=1,
+     changelog_topic=out_topic,
 )
 
 
@@ -59,29 +53,21 @@ table = app.Table(
 #
 #
 
-def modify_stream(stream):
-    if stream.red:
-        stream.line = "red"
-    elif stream.blue:
-        stream.line = "blue"
-    else:
-        stream.line = "green"
-    logger.debug(f"stream.line : {stream.line}")
-    return stream
-
-
 @app.agent(topic)
-async def process(stations):
-    stations.add_processor(modify_stream)
-
-    for station in stations:
-        transformed_station = TransformedStation(
-            station_id=station.station_id,
-            station_name=station.station_name,
-            order=station.order,
-            line=station.line
-        )
-        await out_topic.send(key=transformed_station.station_id, value=transformed_station)
+async def transform(events):
+    logger.info(f"Running for : {events}")
+    async for event in events:
+        # table[event.station_id] = event.station_id
+        # table[event.station_name] = event.station_name
+        # table[event.order] = event.order
+        # if event.red:
+        #     table[event.line] = "red"
+        # elif event.blue:
+        #     table[event.line] = "blue"
+        # else:
+        #     table[event.line] = "green"
+        logger.info(f"station_id: {event.station_id}")
+        logger.info(f"station_name {event.station_name}")
 
 
 if __name__ == "__main__":
