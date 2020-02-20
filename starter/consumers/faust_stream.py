@@ -31,43 +31,49 @@ class TransformedStation(faust.Record):
 
 # TODO: Define a Faust Stream that ingests data from the Kafka Connect stations topic and
 #   places it into a new topic with only the necessary information.
-app = faust.App("stations-stream", broker="kafka://localhost:9092", store="memory://")
+app = faust.App("app1", broker="kafka://localhost:9092", store="memory://")
 # TODO: Define the input Kafka Topic. Hint: What topic did Kafka Connect output to?
-topic = app.topic("connectorstations", value_type=Station)
+topic = app.topic("connectorstations", key_type=int, value_type=Station)
 # TODO: Define the output Kafka Topic
-out_topic = app.topic("transformed_stations", partitions=1)
+out_topic = app.topic("transformed-stations", partitions=1)
 # TODO: Define a Faust Table
 table = app.Table(
-     "faust-table",
-     default=TransformedStation,
-     partitions=1,
-     changelog_topic=out_topic,
+    "transformed-line",
+    default=TransformedStation,
+    partitions=1,
+    changelog_topic=out_topic,
 )
 
 
-#
+def add_line(stationevents):
+    if stationevents.red:
+        stationevents.line = "red"
+    elif stationevents.blue:
+        stationevents.line = "blue"
+    elif stationevents.green:
+        stationevents.line = "green"
+    return stationevents
+
 #
 # TODO: Using Faust, transform input `Station` records into `TransformedStation` records. Note that
 # "line" is the color of the station. So if the `Station` record has the field `red` set to true,
 # then you would set the `line` of the `TransformedStation` record to the string `"red"`
 #
 #
-
 @app.agent(topic)
-async def transform(events):
-    logger.info(f"Running for : {events}")
-    async for event in events:
-        # table[event.station_id] = event.station_id
-        # table[event.station_name] = event.station_name
-        # table[event.order] = event.order
-        # if event.red:
-        #     table[event.line] = "red"
-        # elif event.blue:
-        #     table[event.line] = "blue"
-        # else:
-        #     table[event.line] = "green"
-        logger.info(f"station_id: {event.station_id}")
-        logger.info(f"station_name {event.station_name}")
+async def transformedstation(stationevents):
+    #
+    # TODO: Group By station-name
+    #
+    stationevents.add_processor(add_line)
+    async for transfstation in stationevents.group_by(Station.station_name):
+        #
+        # TODO: Use the URI as key, and add the number for each click event
+        #
+        table[transfstation.station_id] = transfstation.station_id
+        table[transfstation.station_name] = transfstation.station_name
+        table[transfstation.order] = transfstation.order
+        table[transfstation.line] = transfstation.line
 
 
 if __name__ == "__main__":
