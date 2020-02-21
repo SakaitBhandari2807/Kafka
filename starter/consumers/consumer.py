@@ -36,17 +36,12 @@ class KafkaConsumer:
         #
         #
         self.broker_properties = {
-            #
-            # TODO
-            #
-            "bootstrap.servers": "localhost:9092",
-            "schema.registry.url": ""
+            "bootstrap.servers": "localhost:9092"
         }
 
         # TODO: Create the Consumer, using the appropriate type.
         if is_avro is True:
             self.broker_properties["schema.registry.url"] = "http://localhost:8081"
-            # self.consumer = AvroConsumer(...)
             self.consumer = AvroConsumer(config={
                 "group.id": "kafka-consumer-group",
                 "bootstrap.servers": self.broker_properties["bootstrap.servers"],
@@ -57,7 +52,6 @@ class KafkaConsumer:
                 "group.id": "kafka-consumer-group",
                 "bootstrap.servers": self.broker_properties["bootstrap.servers"]
             })
-            # pass
 
         #
         #
@@ -65,6 +59,7 @@ class KafkaConsumer:
         # how the `on_assign` callback should be invoked.
         #
         #
+        self.consumer.subscribe([self.topic_name_pattern], on_assign=self.on_assign)
         logger.info(f"Running for topic: {self.topic_name_pattern}")
 
     def on_assign(self, consumer, partitions):
@@ -73,13 +68,9 @@ class KafkaConsumer:
         # the beginning or earliest
         logger.info("on_assign is incomplete - skipping")
         for partition in partitions:
-            #
-            #
             # TODO
-            #
-            #
             if self.offset_earliest:
-                partition.offset = OFFSET_BEGINNING
+                partition.offset = "OFFSET_BEGINNING"
 
         logger.info("partitions assigned for %s", self.topic_name_pattern)
         consumer.assign(partitions)
@@ -101,7 +92,7 @@ class KafkaConsumer:
         # is retrieved.
         #
         #
-        self.consumer.subscribe([self.topic_name_pattern], on_assign=on_assign)
+
         message = self.consumer.poll(self.consume_timeout)
 
         if message is None:
@@ -117,8 +108,7 @@ class KafkaConsumer:
 
     def close(self):
         """Cleans up any open kafka consumers"""
-        #
-        #
         # TODO: Cleanup the kafka consumer
         #
-        #
+        self.consumer.commit()
+        self.consumer.close()

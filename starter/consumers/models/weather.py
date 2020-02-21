@@ -21,3 +21,8 @@ class Weather:
         # TODO: Process incoming weather messages. Set the temperature and status.
         #
         #
+        value = message.value()
+        logger.info(f"value : {value} ")
+        self.temperature = value.get("temperature")
+        self.status = value.get("status")
+        logger.info(f"Setting after : t:{self.temperature},s:{self.status}")
