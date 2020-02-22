@@ -59,13 +59,13 @@ def configure_connector():
         }),
     )
 
-    ## Ensure a healthy response was given
+    # Ensure a healthy response was given
     if resp.status_code == 200:
-        logger.info("Success")
+        logger.info("Successfully created the connector for weather")
     try:
         resp.raise_for_status()
-    except:
-        logging.debug("connector failed to create successfully")
+    except Exception as e:
+        logging.error(f"connector failed to create due to {e}")
 
 
 if __name__ == "__main__":

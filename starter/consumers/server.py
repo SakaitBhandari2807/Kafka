@@ -63,27 +63,27 @@ def run_server():
     # Build kafka consumers
     consumers = [
         KafkaConsumer(
-            "com.udacity.project1.weather",
+            "com.udacity.project1.weather.v1",
             weather_model.process_message,
             offset_earliest=True,
         ),
         KafkaConsumer(
-            "org.chicago.cta.project1.stations.*",
+            "org.chicago.cta.project1.stations.v1",
             lines.process_message,
             offset_earliest=True,
             is_avro=False,
         ),
         KafkaConsumer(
-            "com.udacity.project1.turnstile.*",
+            "com.udacity.project1.turnstile.v1",
             lines.process_message,
             offset_earliest=True,
         ),
-        # KafkaConsumer(
-        #     "TURNSTILE_SUMMARY",
-        #     lines.process_message,
-        #     offset_earliest=True,
-        #     is_avro=False,
-        # ),
+        KafkaConsumer(
+            "TURNSTILE_SUMMARY",
+            lines.process_message,
+            offset_earliest=True,
+            is_avro=False,
+        ),
     ]
 
     try:

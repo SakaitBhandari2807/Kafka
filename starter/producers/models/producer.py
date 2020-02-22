@@ -2,7 +2,6 @@
 import logging
 import time
 
-
 from confluent_kafka import avro
 from confluent_kafka.admin import AdminClient, NewTopic
 from confluent_kafka.avro import AvroProducer, CachedSchemaRegistryClient
@@ -19,12 +18,12 @@ class Producer:
     BROKER_URL = "PLAINTEXT://localhost:9092"
 
     def __init__(
-        self,
-        topic_name,
-        key_schema,
-        value_schema=None,
-        num_partitions=1,
-        num_replicas=1,
+            self,
+            topic_name,
+            key_schema,
+            value_schema=None,
+            num_partitions=1,
+            num_replicas=1,
     ):
         """Initializes a Producer object with basic settings"""
         self.topic_name = topic_name
@@ -53,8 +52,10 @@ class Producer:
         # TODO: Configure the AvroProducer
         self.producer = AvroProducer(
             self.broker_properties,
-            schema_registry=self.schema_registry
-         )
+            schema_registry=self.schema_registry,
+            default_key_schema=self.key_schema,
+            default_value_schema=self.value_schema
+        )
         logger.info("Producer ready to produce")
 
     def create_topic(self):
@@ -75,12 +76,10 @@ class Producer:
         ])
 
         for topic, future in futures.items():
-            # logger.info(futures.items())
             try:
                 future.result()
                 logger.info("topic created")
             except Exception as e:
-                print(f"Failed to create the topic {self.topic_name}: {e}")
                 logger.info(f"topic creation Failed due to {e}")
 
     def close(self):
@@ -90,9 +89,8 @@ class Producer:
         # TODO: Write cleanup code for the Producer here
         #
         #
-        logger.info("producer close incomplete - skipping")
         self.producer.flush()
-
+        logger.info("producer close complete")
 
     def time_millis(self):
         """Use this function to get the key for Kafka Events"""

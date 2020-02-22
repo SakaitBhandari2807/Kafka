@@ -31,14 +31,12 @@ class Weather(Producer):
     summer_months = set((6, 7, 8))
 
     def __init__(self, month):
-        #
-        #
+
         # TODO: Complete the below by deciding on a topic name, number of partitions, and number of
         # replicas
-        #
-        #
+
         super().__init__(
-            "com.udacity.project1.weather", # TODO: Come up with a better topic name
+            "com.udacity.project1.weather.v1", # TODO: Come up with a better topic name
             key_schema=Weather.key_schema,
             value_schema=Weather.value_schema,
             num_partitions=1,
@@ -76,36 +74,9 @@ class Weather(Producer):
     def run(self, month):
         self._set_weather(month)
 
-        #
-        #
         # TODO: Complete the function by posting a weather event to REST Proxy. Make sure to
         # specify the Avro schemas and verify that you are using the correct Content-Type header.
-        #
-        #
 
-        #resp = requests.post(
-        #    #
-        #    #
-        #    # TODO: What URL should be POSTed to?
-        #    #
-        #    #
-        #    f"{Weather.rest_proxy_url}/TODO",
-        #    #
-        #    #
-        #    # TODO: What Headers need to bet set?
-        #    #
-        #    #
-        #    headers={"Content-Type": "TODO"},
-        #    data=json.dumps(
-        #        {
-        #            #
-        #            #
-        #            # TODO: Provide key schema, value schema, and records
-        #            #
-        #            #
-        #        }
-        #    ),
-        #)
         #resp.raise_for_status()
          # TODO: Set the appropriate headers
         #       See: https://docs.confluent.io/current/kafka-rest/api.html#content-types

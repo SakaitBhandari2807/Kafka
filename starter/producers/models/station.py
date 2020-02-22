@@ -7,7 +7,6 @@ from confluent_kafka import avro
 from models import Turnstile
 from models.producer import Producer
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -20,15 +19,16 @@ class Station(Producer):
     # TODO: Define this value schema in `schemas/station_value.json, then uncomment the below
     #
     value_schema = avro.load(f"{Path(__file__).parents[0]}/schemas/arrival_value.json")
+
     # logger.info("Loaded: "+str(type(value_schema)))
     def __init__(self, station_id, name, color, direction_a=None, direction_b=None):
         self.name = name
         station_name = (
             self.name.lower()
-            .replace("/", "_and_")
-            .replace(" ", "_")
-            .replace("-", "_")
-            .replace("'", "")
+                .replace("/", "_and_")
+                .replace(" ", "_")
+                .replace("-", "_")
+                .replace("'", "")
         )
         # logger.info(f"station_id:{station_id}\n station_name: {name}\n color: {color}\n")
         #
@@ -37,8 +37,8 @@ class Station(Producer):
         # replicas
         #
         #
-        topic_name = f"com.udacity.project1.stations.{station_name}"
-        # logger.info(f"topic_name:{topic_name}")
+        topic_name = f"com.udacity.project1.stations.{self.color}.{station_name}"
+        logger.info(f"topic_name:{topic_name}")
         super().__init__(
             topic_name,
             key_schema=Station.key_schema,
