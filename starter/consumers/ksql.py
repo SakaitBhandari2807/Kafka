@@ -23,14 +23,18 @@ KSQL_URL = "http://localhost:8088"
 
 KSQL_STATEMENT = """
 CREATE TABLE turnstile (
-    ???
+    station_id int,
+    station_name varchar,
+    line varchar
 ) WITH (
-    ???
+    kafka_topic='com.udacity.project1.turnstile.v1',
+    value_format='avro',
+    key='station_id'
 );
 
 CREATE TABLE turnstile_summary
-WITH (???) AS
-    ???
+WITH (value_format='JSON') as
+select station_id,count(*) as count from turnstile group by station_id;
 """
 
 
@@ -53,7 +57,12 @@ def execute_statement():
     )
 
     # Ensure that a 2XX status code was returned
-    resp.raise_for_status()
+    if resp.status_code == 200:
+        logger.info(f"Created turnstile summary table using ksql.")
+    try:
+        resp.raise_for_status()
+    except:
+        print(f"Some error occured while running ksql commands")
 
 
 if __name__ == "__main__":

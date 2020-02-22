@@ -60,8 +60,12 @@ def configure_connector():
     )
 
     ## Ensure a healthy response was given
-    resp.raise_for_status()
-    logging.debug("connector created successfully")
+    if resp.status_code == 200:
+        logger.info("Success")
+    try:
+        resp.raise_for_status()
+    except:
+        logging.debug("connector failed to create successfully")
 
 
 if __name__ == "__main__":
