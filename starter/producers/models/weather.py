@@ -11,7 +11,6 @@ import requests
 
 from models.producer import Producer
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -36,7 +35,7 @@ class Weather(Producer):
         # replicas
 
         super().__init__(
-            "com.udacity.project1.weather.v1", # TODO: Come up with a better topic name
+            "com.udacity.project1.weather.v1",  # TODO: Come up with a better topic name
             key_schema=Weather.key_schema,
             value_schema=Weather.value_schema,
             num_partitions=1,
@@ -77,32 +76,30 @@ class Weather(Producer):
         # TODO: Complete the function by posting a weather event to REST Proxy. Make sure to
         # specify the Avro schemas and verify that you are using the correct Content-Type header.
 
-        #resp.raise_for_status()
-         # TODO: Set the appropriate headers
+        # TODO: Set the appropriate headers
         #       See: https://docs.confluent.io/current/kafka-rest/api.html#content-types
         headers = {"Content-Type": "application/vnd.kafka.json.v2+json"}
         # TODO: Update the below payload to include the Avro Schema string
         #       See: https://docs.confluent.io/current/kafka-rest/api.html#post--topics-(string-topic_name)
-        data = {"value_schema": self.value_schema,
-                "key_schema": self.key_schema,
+        data = {"value_schema": Weather.value_schema,
+                "key_schema": Weather.key_schema,
                 "records": [{
                     "key": {"timestamp": str(self.time_millis())},
                     "value": {
-            "temperature":str(self.temp),
-            "status":str(self.status.name)
-        }}]}
-        logger.debug(
-            "Sending:  "+str(data)
-        )
+                        "temperature": str(self.temp),
+                        "status": str(self.status.name)
+                    }}]}
         resp = requests.post(
-            f"{Weather.rest_proxy_url}/topics/com.udacity.project1.weather",  # TODO
+            f"{Weather.rest_proxy_url}/topics/com.udacity.project1.weather.v1",  # TODO
             data=json.dumps(data),
             headers=headers
         )
 
+        if resp.status_code == 200:
+            logger.info("Data sent successfully to kafka weather topic")
         try:
             resp.raise_for_status()
-        except:
-            print(f"Failed to send data to REST Proxy {json.dumps(resp.json(), indent=2)}")
+        except Exception as e:
+            logger.error(f"Failed to send data to REST Proxy due to {e}")
 
-        print(f"Sent data to REST Proxy {json.dumps(resp.json(), indent=2)}")
+        # print(f"Sent data to REST Proxy {json.dumps(resp.json(), indent=2)}")
