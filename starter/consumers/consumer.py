@@ -48,7 +48,7 @@ class KafkaConsumer:
                 "schema.registry.url": self.broker_properties["schema.registry.url"]
             })
         else:
-            self.consumer = Consumer(config={
+            self.consumer = Consumer({
                 "group.id": "kafka-consumer-group",
                 "bootstrap.servers": self.broker_properties["bootstrap.servers"]
             })

@@ -19,10 +19,10 @@ class Lines:
 
     def process_message(self, message):
         """Processes a station message"""
-        if "com.udacity.project1.stations.*" in message.topic():
+        if "com.udacity.project1.stations.v1" in message.topic():
             value = message.value()
-            logger.info(f"value: {value}")
-            if message.topic() == "org.chicago.cta.stations.table.v1":
+            print(f"value: {value}")
+            if message.topic() == "transformed-stations":
                 value = json.loads(value)
             if value["line"] == "green":
                 self.green_line.process_message(message)
@@ -37,4 +37,4 @@ class Lines:
             self.red_line.process_message(message)
             self.blue_line.process_message(message)
         else:
-            logger.info("ignoring non-lines message %s", message.topic())
+            print("ignoring non-lines message %s", message.topic())
