@@ -22,6 +22,7 @@ class KafkaConsumer:
             sleep_secs=1.0,
             consume_timeout=0.1,
     ):
+        print("Init for topic",topic_name_pattern)
         """Creates a consumer object for asynchronous use"""
         self.topic_name_pattern = topic_name_pattern
         self.message_handler = message_handler
@@ -42,11 +43,11 @@ class KafkaConsumer:
         # TODO: Create the Consumer, using the appropriate type.
         if is_avro is True:
             self.broker_properties["schema.registry.url"] = "http://localhost:8081"
-            self.consumer = AvroConsumer(config={
+            self.consumer = AvroConsumer({
                 "group.id": "kafka-consumer-group",
                 "bootstrap.servers": self.broker_properties["bootstrap.servers"],
-                "schema.registry.url": self.broker_properties["schema.registry.url"]
-            })
+            },
+            schema_registry=self.broker_properties["schema.registry.url"])
         else:
             self.consumer = Consumer({
                 "group.id": "kafka-consumer-group",
@@ -60,17 +61,17 @@ class KafkaConsumer:
         #
         #
         self.consumer.subscribe([self.topic_name_pattern], on_assign=self.on_assign)
-        logger.info(f"Running for topic: {self.topic_name_pattern}")
+        print(f"Init complete for:{self.topic_name_pattern}")
 
     def on_assign(self, consumer, partitions):
         """Callback for when topic assignment takes place"""
         # TODO: If the topic is configured to use `offset_earliest` set the partition offset to
         # the beginning or earliest
-        logger.info("on_assign is incomplete - skipping")
+        print("on_assign is Running")
         for partition in partitions:
             # TODO
             if self.offset_earliest:
-                partition.offset = "OFFSET_BEGINNING"
+                partition.offset = 0
 
         logger.info("partitions assigned for %s", self.topic_name_pattern)
         consumer.assign(partitions)
@@ -94,13 +95,14 @@ class KafkaConsumer:
         #
 
         message = self.consumer.poll(self.consume_timeout)
-
+        print(f"message in _consume (): {message}")
         if message is None:
             return 0
         elif message.error() is not None:
             logger.error("Error caused due to :", message.error())
             return 0
         else:
+            print("message_handler called()")
             self.message_handler(message)
             return 1
         logger.info("_consume is complete - Running")
@@ -111,4 +113,6 @@ class KafkaConsumer:
         # TODO: Cleanup the kafka consumer
         #
         self.consumer.commit()
+        self.consumer.unassign();
+        self.consumer.unsubscribe();
         self.consumer.close()

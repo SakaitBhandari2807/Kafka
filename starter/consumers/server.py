@@ -46,7 +46,7 @@ def run_server():
             "Ensure that the KSQL Command has run successfully before running the web server!"
         )
         exit(1)
-    if topic_check.topic_exists("com.udacity.project1.weather") is False:
+    if topic_check.topic_exists("com.udacity.project1.weather.v1") is False:
         logger.fatal(
             "Ensure that Faust Streaming is running successfully before running the web server!"
         )
@@ -67,23 +67,23 @@ def run_server():
             weather_model.process_message,
             offset_earliest=True,
         ),
-        KafkaConsumer(
-            "org.chicago.cta.project1.stations.v1",
-            lines.process_message,
-            offset_earliest=True,
-            is_avro=False,
-        ),
-        KafkaConsumer(
-            "com.udacity.project1.turnstile.v1",
-            lines.process_message,
-            offset_earliest=True,
-        ),
-        KafkaConsumer(
-            "TURNSTILE_SUMMARY",
-            lines.process_message,
-            offset_earliest=True,
-            is_avro=False,
-        ),
+        # KafkaConsumer(
+        #     "org.chicago.cta.project1.stations.v1",
+        #     lines.process_message,
+        #     offset_earliest=True,
+        #     is_avro=False,
+        # ),
+        # KafkaConsumer(
+        #     "com.udacity.project1.turnstile.v1",
+        #     lines.process_message,
+        #     offset_earliest=True,
+        # ),
+        # KafkaConsumer(
+        #     "TURNSTILE_SUMMARY",
+        #     lines.process_message,
+        #     offset_earliest=True,
+        #     is_avro=False,
+        # ),
     ]
 
     try:
