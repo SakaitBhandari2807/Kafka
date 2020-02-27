@@ -37,22 +37,16 @@ class KafkaConsumer:
         #
         #
         self.broker_properties = {
-            "bootstrap.servers": "localhost:9092"
+            "bootstrap.servers": "localhost:9092",
+            "group.id":"c-01"
         }
 
         # TODO: Create the Consumer, using the appropriate type.
         if is_avro is True:
             self.broker_properties["schema.registry.url"] = "http://localhost:8081"
-            self.consumer = AvroConsumer({
-                "group.id": "kafka-consumer-group",
-                "bootstrap.servers": self.broker_properties["bootstrap.servers"],
-            },
-            schema_registry=self.broker_properties["schema.registry.url"])
+            self.consumer = AvroConsumer(self.broker_properties)
         else:
-            self.consumer = Consumer({
-                "group.id": "kafka-consumer-group",
-                "bootstrap.servers": self.broker_properties["bootstrap.servers"]
-            })
+            self.consumer = Consumer(self.broker_properties)
 
         #
         #
@@ -71,7 +65,7 @@ class KafkaConsumer:
         for partition in partitions:
             # TODO
             if self.offset_earliest:
-                partition.offset = 0
+                partition.offset = confluent_kafka.OFFSET_BEGINNING
 
         logger.info("partitions assigned for %s", self.topic_name_pattern)
         consumer.assign(partitions)
@@ -94,7 +88,12 @@ class KafkaConsumer:
         #
         #
 
-        message = self.consumer.poll(self.consume_timeout)
+        try:
+            message = self.consumer.poll(self.consume_timeout)
+
+        except SerializerError as e:
+            print("Message deserialization failed for {}: {}".format(msg, e))
+            return 0
         print(f"message in _consume (): {message}")
         if message is None:
             return 0
