@@ -35,7 +35,7 @@ class Weather(Producer):
         # replicas
 
         super().__init__(
-            "com.udacity.project1.weather.v1",  # TODO: Come up with a better topic name
+            topic_name="com.udacity.project1.weather.v1",  # TODO: Come up with a better topic name
             key_schema=Weather.key_schema,
             value_schema=Weather.value_schema,
             num_partitions=1,
@@ -81,8 +81,8 @@ class Weather(Producer):
         headers = {"Content-Type": "application/vnd.kafka.json.v2+json"}
         # TODO: Update the below payload to include the Avro Schema string
         #       See: https://docs.confluent.io/current/kafka-rest/api.html#post--topics-(string-topic_name)
-        data = {"value_schema": Weather.value_schema,
-                "key_schema": Weather.key_schema,
+        data = {"value_schema": json.dumps(Weather.value_schema),
+                "key_schema": json.dumps(Weather.key_schema),
                 "records": [{
                     "key": {"timestamp": str(self.time_millis())},
                     "value": {

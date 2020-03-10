@@ -22,7 +22,7 @@ class Lines:
         if "com.udacity.project1.stations.v1" in message.topic():
             value = message.value()
             print(f"value: {value}")
-            if message.topic() == "transformed-stations":
+            if message.topic() == "com.udacity.project1.table.v1":
                 value = json.loads(value)
             if value["line"] == "green":
                 self.green_line.process_message(message)

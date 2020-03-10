@@ -57,7 +57,7 @@ class Line:
     def process_message(self, message):
         """Given a kafka message, extract data"""
         # TODO: Based on the message topic, call the appropriate handler.
-        if "com.udacity.project1.transformed-stations" in message.topic():
+        if "com.udacity.project1.table.v1" == message.topic():
             # Set the conditional correctly to the stations Faust Table
             try:
                 value = json.loads(message.value())
@@ -68,7 +68,7 @@ class Line:
         elif "com.udacity.project1.stations.*" in message.topic():
             # Set the conditional to the arrival topic
             self._handle_arrival(message)
-        elif True:
+        elif "TURNSTILE_SUMMARY" in message.topics():
             # Set the conditional to the KSQL Turnstile Summary Topic
             json_data = json.loads(message.value())
             station_id = json_data.get("STATION_ID")

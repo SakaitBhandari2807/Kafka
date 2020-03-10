@@ -21,10 +21,8 @@ class Weather:
         # TODO: Process incoming weather messages. Set the temperature and status.
         #
         #
-        value = message.value()
-        print(f"value : {value} ")
-
-        self.temperature = value.get("temperature")
-        self.status = value.get("status")
+        weather_info = message.value()
+        self.temperature = weather_info["temperature"]
+        self.status = weather_info["status"]
         
         print(f"Running process weather : temperature :{self.temperature},status :{self.status}")

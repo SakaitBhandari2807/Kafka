@@ -52,7 +52,7 @@ def configure_connector():
                 # TODO
                 "incrementing.column.name": "stop_id",
                 # TODO
-                "topic.prefix": "connector",
+                "topic.prefix": "com.udacity.project1.",
                 # TODO
                 "poll.interval.ms": "1000",
             }

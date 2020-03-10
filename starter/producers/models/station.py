@@ -37,7 +37,7 @@ class Station(Producer):
         # replicas
         #
         #
-        topic_name = f"com.udacity.project1.stations.{self.color}.{station_name}"
+        topic_name = f"com.udacity.project1.station.arrivals.{station_name}.v1"
         logger.info(f"topic_name:{topic_name}")
         super().__init__(
             topic_name,

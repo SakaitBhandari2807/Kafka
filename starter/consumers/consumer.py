@@ -38,7 +38,10 @@ class KafkaConsumer:
         #
         self.broker_properties = {
             "bootstrap.servers": "localhost:9092",
-            "group.id":"c-01"
+            "group.id":self.topic_name_pattern,
+            "default.topic.config":{
+                "auto.offset.reset" : "earliest"
+            }
         }
 
         # TODO: Create the Consumer, using the appropriate type.
@@ -89,7 +92,7 @@ class KafkaConsumer:
         #
 
         try:
-            message = self.consumer.poll(self.consume_timeout)
+            message = self.consumer.poll(1.0)
 
         except SerializerError as e:
             print("Message deserialization failed for {}: {}".format(msg, e))
@@ -104,8 +107,7 @@ class KafkaConsumer:
             print("message_handler called()")
             self.message_handler(message)
             return 1
-        logger.info("_consume is complete - Running")
-        # return 0
+
 
     def close(self):
         """Cleans up any open kafka consumers"""

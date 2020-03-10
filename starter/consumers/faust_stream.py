@@ -33,12 +33,12 @@ class TransformedStation(faust.Record):
 #   places it into a new topic with only the necessary information.
 app = faust.App("app1", broker="kafka://localhost:9092", store="memory://")
 # TODO: Define the input Kafka Topic. Hint: What topic did Kafka Connect output to?
-topic = app.topic("connectorstations",value_type=Station)
+topic = app.topic("com.udacity.project1.stations",value_type=Station)
 # TODO: Define the output Kafka Topic
-out_topic = app.topic("transformed-stations", partitions=1)
+out_topic = app.topic("com.udacity.project1.table.v1", partitions=1)
 # TODO: Define a Faust Table
 table = app.Table(
-    "transformed-line",
+    "com.udacity.project1.table.v1",
     default=TransformedStation,
     partitions=1,
     changelog_topic=out_topic,
@@ -71,17 +71,28 @@ async def transformedstation(stationevents):
         #
         # TODO: Use the URI as key, and add the number for each click event
         #
-        table[event.station_id] = event.station_id
-        table[event.station_name] = event.station_name
-        table[event.order] = event.order
-        # table["line"] = event.line
-        print(event)
+        # table[event.station_id] = event.station_id
+        # table[event.station_name] = event.station_name
+        # table[event.order] = event.order
+        # # table["line"] = event.line
+        # print(event)
+        # if event.red:
+        #     table["line"] = "red"
+        # elif event.blue:
+        #     table["line"] = "blue"
+        # elif event.green:
+        #     table["line"] = "green"
+
         if event.red:
-            table["line"] = "red"
-        elif event.blue:
-            table["line"] = "blue"
+            line = "red"
         elif event.green:
-            table["line"] = "green"
+            line = "green"
+        elif event.blue:
+            line = "blue"
+        else:
+            line = "N/A"
+            
+        table[event.station_id] = TransformedStation(event.station_id,event.station_name,event.order,event.line)
 
 
 if __name__ == "__main__":
