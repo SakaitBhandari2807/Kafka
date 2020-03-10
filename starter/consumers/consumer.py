@@ -39,9 +39,7 @@ class KafkaConsumer:
         self.broker_properties = {
             "bootstrap.servers": "localhost:9092",
             "group.id":self.topic_name_pattern,
-            "default.topic.config":{
-                "auto.offset.reset" : "earliest"
-            }
+            'auto.offset.reset': 'earliest'
         }
 
         # TODO: Create the Consumer, using the appropriate type.
@@ -68,7 +66,7 @@ class KafkaConsumer:
         for partition in partitions:
             # TODO
             if self.offset_earliest:
-                partition.offset = confluent_kafka.OFFSET_BEGINNING
+                partition.offset = 0
 
         logger.info("partitions assigned for %s", self.topic_name_pattern)
         consumer.assign(partitions)

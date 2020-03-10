@@ -84,11 +84,15 @@ class Weather(Producer):
         data = {"value_schema": json.dumps(Weather.value_schema),
                 "key_schema": json.dumps(Weather.key_schema),
                 "records": [{
-                    "key": {"timestamp": str(self.time_millis())},
+                    "key": {
+                        "timestamp": self.time_millis()
+                        },
                     "value": {
-                        "temperature": str(self.temp),
-                        "status": str(self.status.name)
-                    }}]}
+                        "temperature": int(self.temp),
+                        "status": self.status.name
+                     }
+                    }]
+                }
         resp = requests.post(
             f"{Weather.rest_proxy_url}/topics/com.udacity.project1.weather.v1",  # TODO
             data=json.dumps(data),

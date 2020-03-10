@@ -63,14 +63,14 @@ class Turnstile(Producer):
             try:
 
                 self.producer.produce(
-                topic=self.topic_name,
-                key={"timestamp": self.time_millis()},
-                value={
-                    "station_id":str(self.station.station_id),
-                    "station_name":str(self.station.name),
-                    "line":str(self.station.color.name)},
-                key_schema=Turnstile.key_schema,
-                value_schema=Turnstile.value_schema)
+                    topic=self.topic_name,
+                    key={"timestamp": self.time_millis()},
+                    value={
+                        "station_id":self.station.station_id,
+                        "station_name":self.station.name,
+                        "line":self.station.color.name
+                        }
+                    )
 
             except Exception as e:
 

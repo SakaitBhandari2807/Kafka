@@ -27,7 +27,7 @@ CREATE TABLE turnstile (
     station_name varchar,
     line varchar
 ) WITH (
-    kafka_topic='com.udacity.project1.turnstile.v1',
+    kafka_topic='com.udacity.project1.station.turnstile.v1',
     value_format='avro',
     key='station_id'
 );
