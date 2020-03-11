@@ -78,7 +78,7 @@ class Weather(Producer):
 
         # TODO: Set the appropriate headers
         #       See: https://docs.confluent.io/current/kafka-rest/api.html#content-types
-        headers = {"Content-Type": "application/vnd.kafka.json.v2+json"}
+        headers = {"Content-Type": "application/vnd.kafka.avro.v2+json"}
         # TODO: Update the below payload to include the Avro Schema string
         #       See: https://docs.confluent.io/current/kafka-rest/api.html#post--topics-(string-topic_name)
         data = {"value_schema": json.dumps(Weather.value_schema),

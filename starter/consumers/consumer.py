@@ -67,6 +67,7 @@ class KafkaConsumer:
             # TODO
             if self.offset_earliest:
                 partition.offset = 0
+            print("partition",partition)
 
         logger.info("partitions assigned for %s", self.topic_name_pattern)
         consumer.assign(partitions)

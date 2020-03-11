@@ -68,7 +68,7 @@ class Line:
         elif "com.udacity.project1.stations.*" in message.topic():
             # Set the conditional to the arrival topic
             self._handle_arrival(message)
-        elif "TURNSTILE_SUMMARY" in message.topics():
+        elif "TURNSTILE_SUMMARY" in message.topic():
             # Set the conditional to the KSQL Turnstile Summary Topic
             json_data = json.loads(message.value())
             station_id = json_data.get("STATION_ID")
