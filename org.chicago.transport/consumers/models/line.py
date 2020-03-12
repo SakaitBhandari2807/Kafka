@@ -65,7 +65,7 @@ class Line:
                 self._handle_station(value)
             except Exception as e:
                 logger.fatal("bad station? %s, %s", value, e)
-        elif "com.udacity.project1.stations.*" in message.topic():
+        elif "arrivals" in message.topic():
             # Set the conditional to the arrival topic
             self._handle_arrival(message)
         elif "TURNSTILE_SUMMARY" in message.topic():

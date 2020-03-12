@@ -19,7 +19,7 @@ class Lines:
 
     def process_message(self, message):
         """Processes a station message"""
-        if "com.udacity.project1.stations.v1" in message.topic():
+        if "com.udacity.project1" in message.topic():
             value = message.value()
             print(f"value: {value}")
             if message.topic() == "com.udacity.project1.table.v1":
